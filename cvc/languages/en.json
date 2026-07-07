@@ -23,6 +23,10 @@
         {"action":"say", "words":["say","talk"], "usage":"Cozmo says X (where X is any text)."},
         {"action":"blocks", "words":["blocks","cubes","play"], "usage":"Cozmo plays with his blocks."},
         {"action":"dance", "words":["dance","jump"], "usage":"Cozmo dances."},
-        {"action":"charger", "words":["charger","base"], "usage":"Cozmo tries to park on his charger, in 3 tries."}
+        {"action":"charger", "words":["charger","base"], "usage":"Cozmo tries to park on his charger, in 3 tries."},
+        {"action":"mood", "words":["mood","how are you","feeling"], "usage":"Cozmo says how he is feeling."},
+        {"action":"happy", "words":["be happy","cheer up"], "usage":"Cozmo becomes happy."},
+        {"action":"sad", "words":["be sad"], "usage":"Cozmo becomes sad."},
+        {"action":"sleep", "words":["sleep","go to sleep","good night"], "usage":"Cozmo goes to sleep."}
     ]
 }

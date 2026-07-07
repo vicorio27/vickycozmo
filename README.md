@@ -1,81 +1,357 @@
-# Cozmo voice Commands (CvC)
+# Cozmo Voice Commands (CvC)
 
-Issue multiple voice commands to [Cozmo](https://anki.com/en-us/cozmo), and watch him execute all of them sequentially: highly customizable, you can add new commands with ease. Recognizes *English, Italian, French, German, Dutch* but it's very easy to add new languages!
+Control your [Cozmo](https://anki.com/en-us/cozmo) robot with your voice. Issue single or chained commands, have conversations with a local AI, let Cozmo roam autonomously, and customize everything through a web editor.
 
-# **IMPORTANT!**  
-Unfortunately Cozmo and Cozmo SDK are no longer supported or updated by their developers so, as time goes by, they will be no longer compatible with newer Python versions and libraries.  
-**Cozmo SDK works well with Python 3.6**, so what I sugget is to create a Python **virtual environment** with that specific version, then let this app run inside it.   
+> **Important:** Cozmo and the Cozmo SDK are no longer maintained. The SDK works best with **Python 3.6**. Use a Python 3.6 virtual environment to avoid compatibility issues.
 
-I suggest to use [Miniconda](https://docs.conda.io/en/latest/miniconda.html), because it's easy to specify a custom Python version on the fly.   
-First create the virtual environment and name it as you like (here I use cvc for simplicity):  
-`conda create -n cvc python=3.6`  
-then activate it:  
-`conda activate cvc`  
-and then you can install CvC package as described below:  
-`pip install --upgrade git+https://github.com/rizal72/Cozmo-Voice-Commands` 
-then run it, typing:  
-`cvc`
+## Features
 
-*note: remeber that you will still need `portaudio` to be installed on your system as described in the installation section below.
-#
+- **Voice commands** in English, Italian, French, German, and Dutch — easy to add more languages.
+- **Chained commands** using language-specific separators like English `THEN`.
+- **Two connection backends**: official Anki SDK (requires mobile app) or **pycozmo** (direct WiFi, no app needed).
+- **Local AI conversation** with Ollama (LLM mode).
+- **Emotional state** system that changes Cozmo's lights, animations, and replies.
+- **Autonomous pet mode** for idle behavior based on mood.
+- **Autonomous agent** — Cozmo observes, thinks, and acts on his own using LLM + memory.
+- **Interactive web control panel** — full UI with camera, buttons, sliders, and voice.
+- **Offline speech recognition** with Vosk — no internet required.
+- **Web editor** to edit languages and commands from a browser.
+- **Persistent memory** — SQLite database that stores interactions and learns from them.
 
-### Description
-You can say _"Cozmo, **forward** 20 THEN **right** 90"_, or _"Hello Cozmo, my little friend, could you please drive forward for 3 seconds **THEN** rotate left 90 degrees **THEN** dance **THEN** drive back to your charger?"_, **and Cozmo will execute the commands in both cases**: the application will always dynamically match the recognized spoken words with the code methods and arguments, **it even parses verbs in their different conjugations**, and numbers as arguments of the action to perform.  
+## Requirements
 
-**Tested on macOS, Windows and Linux**
+- Python 3.6
+- `portaudio` system library
+- A microphone
+- [Cozmo SDK setup](http://cozmosdk.anki.com/docs/) for your platform (only needed for the Anki backend)
+- [Npcap](https://npcap.com) on Windows (only needed for pycozmo backend)
 
-### Two steps installation
-Assuming that you've already performed the [**Cozmo SDK Setup**](http://cozmosdk.anki.com/docs/), specific for your platform:  
+### System dependencies
 
-1. **CvC** requires `portaudio`:
+**macOS:**
+```bash
+brew install portaudio
+```
 
-  * on **MacOS** (see [Homebrew](http://brew.sh/index_it.html) if you don't know what `brew` is):  
-`brew install portaudio`
+**Linux:**
+```bash
+sudo apt-get install flac portaudio19-dev python-all-dev python3-all-dev
+```
 
-  * on **Linux**:  
-`sudo apt-get install flac portaudio19-dev python-all-dev python3-all-dev && pip3 install --user PyAudio`
+**Windows:**
+- Install [Git for Windows](https://git-scm.com/download/win)
+- You may need a PyAudio wheel for your Python version
 
-  * on **Windows**:  
-you only need to [install git](https://git-scm.com/download/win) as it is not included by default.  
+## Installation
 
-2. install `cvc` package:  
-`pip install --upgrade git+https://github.com/rizal72/Cozmo-Voice-Commands`  
-  * If you are having permission issues (happens mainly on Linux) try:  
-  `pip install --upgrade --user git+https://github.com/rizal72/Cozmo-Voice-Commands`
+Use Miniconda/Conda to create a Python 3.6 environment:
 
-**note:** to update **CvC**, repeat step **2**.
+```bash
+conda create -n cvc python=3.6
+conda activate cvc
+```
 
-### Usage
-* run command `cvc` from the Terminal application.
-  * Optional arguments:  
-`--version[-V]`: print version and exit  
-`--no-wait[-N]`: enable deprecated continuous listening mode  
-`--log[-L]`: enable verbose logging  
-* choose speech recognition language and press enter.
-* press **SHIFT** when you are ready, then issue your commands by voice (you have 5 seconds to start talking before it Timeouts), not too far from your PC, taking care to include the words "**Cozmo**" or "**Robot**" before any command you'll say: _"Ok COZMO, my friend, would you enjoy DANCING?"_  
-**You can issue multiple commands at once:** use the word *"THEN"* (_"POI"_ in Italian, _"ALORS"_ in French, _"DAARNA"_ in Dutch, and so on...), to separate them. Right now these commands will be executed in a sequence. I plan to make some of them to be executed in parallel in the near future.
-* **A list of supported commands and arguments is provided at runtime.**
+Install from the repository:
 
-### Customization
-From version 0.6 you can now add new languages and commands with ease: inside `cvc/languages` folder you'll find one .json file for each language (i.e. `en.json`). To add a new command just duplicate one of the existing commands inside the .json, changing its parameters with the desired ones (_be careful to keep the same structure_):  
+```bash
+pip install --upgrade git+https://github.com/rizal72/Cozmo-Voice-Commands
+```
 
-* **DO NOT FORGET** to change the id number, that decides language order (it's the first parameter).
-* `'action'` is the name of the method/function you are going to create in `voice_commands.py`
-* `'words'` are the recognized words  
-* `'usage'` is a description/usage of your command  
+Or install from source for development:
 
-then open `voice_commands.py` and create the new method/function for your command, just copying an existing one, taking care to use the same name you set in the `'action'` parameter, inside the .json.  
-**You can even add new words to existing commands**, only be careful to not use the same words in different commands.  
-To add a new language, duplicate one of the included .json language files, using the same naming, and **translate its contents**.
-Your new language will be automatically loaded on startup, and a new language menu item automatically generated ;)
+```bash
+git clone https://github.com/rizal72/Cozmo-Voice-Commands.git
+cd Cozmo-Voice-Commands
+pip install -e .
+```
 
-#### Note for Developers:
-If you want to just run the App **without installing the package**, you need to execute `./cvc.py` from the root folder, after you have cloned/downloaded the [repository](https://github.com/rizal72/Cozmo-Voice-Commands) content.
+### Offline speech model (optional)
 
-### Todo next
-* Allow more commands at once, to be executed in parallel, using the word _"and"_.   
+For offline voice recognition, download the Vosk English model:
 
-**Please note:** Cozmo does not have built-in microphone, so you should talk with your computer ;)  
+```bash
+mkdir -p cvc/models/vosk
+cd cvc/models/vosk
+# Download and extract
+curl -LO https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
+unzip vosk-model-small-en-us-0.15.zip
+rm vosk-model-small-en-us-0.15.zip
+```
 
-**If you want the code, get it here:**
-https://github.com/rizal72/Cozmo-Voice-Commands
+### pycozmo backend (no mobile app needed)
+
+To control Cozmo directly over WiFi without the mobile app:
+
+```bash
+pip install pycozmo
+```
+
+**Windows:** install [Npcap](https://npcap.com) for packet capture.
+**Linux:** run with `sudo` or set packet capture capabilities.
+
+Then connect your PC to Cozmo's WiFi network and run:
+
+```bash
+cvc --use-pycozmo
+```
+
+**Feature compatibility:**
+
+| Feature | Anki SDK (app) | pycozmo (no app) |
+|---------|---------------|------------------|
+| Drive forward/backward | ✅ | ✅ |
+| Turn left/right | ✅ | ✅ |
+| Lift/head movement | ✅ | ✅ |
+| Speech (say text) | ✅ | ✅ |
+| Backpack lights | ✅ | ✅ |
+| Play animations | ✅ | ⚠️ Most work |
+| Look around | ✅ | ✅ (simulated) |
+| Find faces | ✅ | ⚠️ Limited |
+| Follow face | ✅ | ⚠️ Simplified |
+| Take picture | ✅ | ✅ |
+| Play with blocks | ✅ | ⚠️ Simplified |
+| Go to charger | ✅ | ❌ Not available |
+| Battery voltage | ✅ | ⚠️ Approximate |
+
+### Local AI model (optional)
+
+For conversation mode, install [Ollama](https://ollama.com) and pull a model:
+
+```bash
+ollama pull phi3
+```
+
+## Usage
+
+Run the app:
+
+```bash
+cvc
+```
+
+### Basic voice control
+
+1. Choose a language from the menu.
+2. Press **SHIFT** when you are ready to speak.
+3. Say a command starting with **"Cozmo"** or **"Robot"**, for example:
+   - *"Cozmo, forward 3"*
+   - *"Cozmo, dance THEN take a picture THEN go to your charger"*
+
+You have about 5 seconds to start talking after pressing SHIFT.
+
+### Command-line options
+
+| Flag | Description |
+|------|-------------|
+| `--version` / `-V` | Print version and exit |
+| `--log` / `-L` | Enable verbose logging |
+| `--no-wait` / `-W` | Continuous listening mode (deprecated) |
+| `--use-pycozmo` | Use pycozmo backend (direct WiFi, no mobile app) |
+| `--autonomous` | Enable autonomous agent mode (observe + think + act with LLM) |
+| `--llm` | Enable local AI conversation mode |
+| `--llm-model=MODEL` | Use a different Ollama model (default: `phi3`) |
+| `--offline-stt` | Use Vosk offline speech recognition |
+| `--pet-mode` | Enable autonomous pet behavior |
+| `--web-editor` | Start the web editor |
+| `--web-port=PORT` | Web editor port (default: 5000) |
+
+### Example: full feature mode
+
+```bash
+cvc --llm --offline-stt --pet-mode --web-editor
+```
+
+This starts Cozmo with:
+- Offline speech recognition
+- Local AI conversations
+- Autonomous pet behavior
+- Web editor at http://127.0.0.1:5000
+
+## Available commands
+
+| Command | Description |
+|---------|-------------|
+| `forward X` | Drive forward for X seconds |
+| `backward X` | Drive backward for X seconds |
+| `left X` | Turn left X degrees (default 90) |
+| `right X` | Turn right X degrees (default 90) |
+| `lift X` | Move lift to height X (0-100) |
+| `head X` | Tilt head to angle X (0-100) |
+| `look` | Look around for a face |
+| `follow` | Follow a visible face |
+| `picture` / `photo` | Take a picture |
+| `say TEXT` | Say TEXT out loud |
+| `blocks` / `cubes` / `play` | Play with blocks |
+| `dance` / `jump` | Dance |
+| `charger` / `base` | Go park on the charger |
+| `mood` / `how are you` / `feeling` | Say how Cozmo feels |
+| `happy` / `cheer up` | Become happy |
+| `be sad` | Become sad |
+| `sleep` / `good night` | Go to sleep |
+
+## Modes
+
+### LLM conversation mode
+
+Enable with `--llm`. After Cozmo executes any physical commands, the recognized speech is also sent to your local Ollama model. Cozmo speaks the AI's reply. The AI prompt includes Cozmo's current emotional state, so replies change with mood.
+
+```bash
+cvc --llm --llm-model=phi3
+```
+
+### Emotions
+
+Cozmo tracks a mood state: `happy`, `sad`, `curious`, `excited`, `tired`, `bored`, `scared`. Mood affects backpack lights, animations, and LLM replies. Inactivity increases boredom and can make Cozmo tired.
+
+Use voice commands like *"Cozmo, how are you?"* or *"Cozmo, cheer up"* to interact with emotions.
+
+### Autonomous pet mode
+
+Enable with `--pet-mode`. Cozmo will act on his own in the background based on his mood:
+- **Bored:** asks for attention, dances, looks around
+- **Tired:** lowers head and lift
+- **Happy/Excited:** dances and moves around
+- **Curious:** looks for faces or plays with blocks
+
+Voice interactions reset boredom.
+
+### Offline speech recognition
+
+Enable with `--offline-stt` to avoid Google Speech Recognition and work without internet. Requires the Vosk model downloaded to `cvc/models/vosk/vosk-model-small-en-us-0.15/`.
+
+Currently English only. Download other Vosk models and point to them to support more languages.
+
+### Autonomous agent
+
+Enable with `--autonomous`. Cozmo enters a continuous loop:
+1. **Observe** — check battery, faces, objects, mood
+2. **Think** — LLM decides what to do based on situation + memory
+3. **Act** — execute the chosen action (drive, turn, speak, dance, etc.)
+4. **Remember** — store the experience in SQLite database
+5. **Learn** — track what works and what doesn't
+
+```bash
+cvc --autonomous --llm --use-pycozmo
+```
+
+The agent learns from interactions and stores:
+- Successful/failed actions
+- People it has seen
+- Facts it has learned
+- Lessons from experience
+
+### Interactive web control panel
+
+Run standalone (no app needed):
+
+```bash
+python -m cvc.web_control
+```
+
+Opens at http://127.0.0.1:8080 with:
+- Camera feed and photo capture
+- Movement controls (D-pad + sliders)
+- Lift and head controls
+- Emotion buttons
+- Light color picker
+- Speech text input
+- Quick command buttons
+- Live log of all commands
+
+Keyboard shortcuts: arrow keys to move, space to dance, `c` for camera, `p` for picture.
+
+### Web editor
+
+Enable with `--web-editor` and open http://127.0.0.1:5000 in your browser. You can:
+- View all loaded languages
+- Edit any language JSON file
+- Save changes directly
+- View live status (emotion, LLM enabled)
+
+## Customization
+
+### Add a new command
+
+1. Open the language file in `cvc/languages/` (e.g., `en.json`).
+2. Add an entry to the `commands` list:
+   ```json
+   {"action": "my_command", "words": ["my command"], "usage": "Description of what it does."}
+   ```
+3. Implement the method in `cvc/voice_commands.py`:
+   ```python
+   def my_command(self, robot, cmd_args):
+       # your code here
+       return "Done!"
+   ```
+
+### Add a new language
+
+1. Copy an existing file in `cvc/languages/`.
+2. Change the `id` to a unique number.
+3. Translate all strings.
+4. The new language will appear automatically in the startup menu.
+
+## Development
+
+Run without installing:
+
+```bash
+python cvc.py
+```
+
+Make sure `cvc/` is on your `PYTHONPATH` or run from the repository root.
+
+## Notes
+
+- Cozmo does not have a built-in microphone. Use your computer's microphone.
+- The original Cozmo SDK targets Python 3.6. Running on newer Python versions may fail due to SDK incompatibilities.
+- Tested on macOS, Windows, and Linux.
+
+## Future Development
+
+### Priority improvements
+
+**Stability (P0):**
+- Add `pytest` tests for core modules
+- Replace `print` with `logging` module (configurable via `--log`)
+- Add type hints to all public methods
+- Add retry logic for backend calls
+
+**Developer experience (P1):**
+- Add `cvc.config` for persistent settings (`~/.config/cvc/config.json`)
+- Add `cvc --init` to generate config interactively
+- Add `cvc --status` to check system health
+
+**Agent intelligence (P2):**
+- Vector embeddings in memory for semantic search of past experiences
+- Skill registry: agent discovers and composes skills dynamically
+- Function-calling support for LLM (structured JSON output)
+- Multi-language agent prompts
+- Curiosity drive: agent explores and tries new things
+
+**Real-time (P3):**
+- WebSocket support in web control panel
+- Live camera streaming via WebSocket
+- Webhook support for external integrations
+
+**Advanced (P4):**
+- Voice wake-word detection (pvporcupine/openwakeword)
+- Face recognition with names
+- Object detection (YOLO) for smarter behavior
+- Multi-robot coordination via MQTT
+- Skill learning: record and replay successful action sequences
+
+### Contributing
+
+- All new code must have type hints
+- All public methods must have docstrings
+- Run `python -m pytest` before committing
+- New features need at least one test
+
+## License
+
+GNU General Public License v3.0
+
+## Author
+
+Riccardo Sallusti — https://github.com/rizal72/Cozmo-Voice-Commands

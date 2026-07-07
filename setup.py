@@ -20,6 +20,11 @@ setup(name='cvc',
           "cozmo[camera]",
           "SpeechRecognition",
           "PyAudio",
-          "Pynput"
+          "Pynput",
+          "vosk",
+          "Flask<2.1",
       ],
+      extras_require={
+          "pycozmo": ["pycozmo"],
+      },
       zip_safe=False)

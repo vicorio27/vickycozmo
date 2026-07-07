@@ -13,3 +13,5 @@ htmlcov
 # pycharm
 .idea
 .bak
+# Large downloaded models
+cvc/models/vosk/vosk-model-*/
