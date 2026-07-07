@@ -27,6 +27,12 @@
         {"action":"mood", "words":["mood","how are you","feeling"], "usage":"Cozmo says how he is feeling."},
         {"action":"happy", "words":["be happy","cheer up"], "usage":"Cozmo becomes happy."},
         {"action":"sad", "words":["be sad"], "usage":"Cozmo becomes sad."},
-        {"action":"sleep", "words":["sleep","go to sleep","good night"], "usage":"Cozmo goes to sleep."}
+        {"action":"sleep", "words":["sleep","go to sleep","good night"], "usage":"Cozmo goes to sleep."},
+        {"action":"personality", "words":["personality","character"], "usage":"Show or change Cozmo's personality."},
+        {"action":"ted", "words":["ted","rude","dark humor"], "usage":"Switch to Ted personality (rude, dark humor)."},
+        {"action":"pirate", "words":["pirate"], "usage":"Switch to Pirate personality."},
+        {"action":"sage", "words":["sage","wise","philosophy"], "usage":"Switch to Sage personality (wise, calm)."},
+        {"action":"roast", "words":["roast","burn"], "usage":"Switch to Roast personality (savage comebacks)."},
+        {"action":"normal", "words":["normal","default","reset personality"], "usage":"Reset to default personality."}
     ]
 }

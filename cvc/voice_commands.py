@@ -326,3 +326,45 @@ class VoiceCommands():
                     print("tired of trying. Giving up =(")
 
         return
+
+    ###### PERSONALITY ######
+
+    def personality(self, robot=None, cmd_args=None):
+        from . import llm as llm_mod
+        if cmd_args and len(cmd_args) > 0:
+            name = cmd_args[0].lower()
+            if llm_mod.set_personality(name):
+                info = llm_mod.get_personality_info()
+                return "Personality set to: " + info["display"]
+            else:
+                available = ", ".join(llm_mod.list_personalities().keys())
+                return "Unknown personality. Available: " + available
+        else:
+            current = llm_mod.get_personality_info()
+            available = ", ".join(llm_mod.list_personalities().keys())
+            return "Current: " + current["display"] + " | Available: " + available
+
+    def ted(self, robot=None, cmd_args=None):
+        from . import llm as llm_mod
+        llm_mod.set_personality("ted")
+        return "Oh great, now I'm Ted. You happy? Let's get this over with."
+
+    def pirate(self, robot=None, cmd_args=None):
+        from . import llm as llm_mod
+        llm_mod.set_personality("pirate")
+        return "Arrr! Cozmo be a pirate now, matey!"
+
+    def sage(self, robot=None, cmd_args=None):
+        from . import llm as llm_mod
+        llm_mod.set_personality("sage")
+        return "Wisdom is not the destination, but the journey itself."
+
+    def roast(self, robot=None, cmd_args=None):
+        from . import llm as llm_mod
+        llm_mod.set_personality("roast")
+        return "Oh, you want me to roast you? Bold move for someone controlling a 6-inch robot."
+
+    def normal(self, robot=None, cmd_args=None):
+        from . import llm as llm_mod
+        llm_mod.set_personality("default")
+        return "Personality reset to normal. Back to being adorable."
